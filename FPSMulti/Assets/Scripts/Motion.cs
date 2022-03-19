@@ -1,8 +1,9 @@
 using UnityEngine;
+using Photon.Pun;
 
 namespace FPSMulti
 {
-    public class Motion : MonoBehaviour
+    public class Motion : MonoBehaviourPunCallbacks
     {
 
         #region Variables
@@ -39,6 +40,9 @@ namespace FPSMulti
 
         void Update()
         {
+            if (!photonView.IsMine) return;
+
+
             //Axes
             float hMove = Input.GetAxisRaw("Horizontal");
             float vMove = Input.GetAxisRaw("Vertical");
@@ -78,6 +82,7 @@ namespace FPSMulti
         // Update is called once per frame
         void FixedUpdate()
         {
+            if (!photonView.IsMine) return;
 
             //Axes
             float hMove = Input.GetAxisRaw("Horizontal");
