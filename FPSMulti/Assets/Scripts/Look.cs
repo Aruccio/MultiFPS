@@ -1,11 +1,11 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-
+using Photon.Pun;
 
 namespace FPSMulti
 {
-    public class Look : MonoBehaviour
+    public class Look : MonoBehaviourPunCallbacks
     {
         #region Variables
         public Transform player;
@@ -30,6 +30,8 @@ namespace FPSMulti
 
         void Update()
         {
+            if (!photonView.IsMine) return;
+
             SetY();
             SetX();
             UpdateCursorLock();

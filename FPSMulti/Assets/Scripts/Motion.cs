@@ -14,6 +14,7 @@ namespace FPSMulti
         public float jumpForce;
         public LayerMask ground;
         public Transform groundDetector;
+        public GameObject cameraParent;
 
 
         private Rigidbody rig;
@@ -31,9 +32,17 @@ namespace FPSMulti
         #region Monobehaviour Callbacks
         private void Start()
         {
-            Camera.main.enabled = false;
-            rig = GetComponent<Rigidbody>();
+
+            cameraParent.SetActive(photonView.IsMine); //ustaw jedyna aktywn¹ kamerê obecnego gracza
+
+            if(!photonView.IsMine) //jesli to nie jest gracz, zmien z "LocalPlayer" na "Player"
+                gameObject.layer = 9;
+
             baseFOV = normalCam.fieldOfView;
+
+            if (Camera.main) Camera.main.enabled = false;
+
+            rig = GetComponent<Rigidbody>();
             weaponParentOriginal = weaponParent.localPosition;
             
         }
@@ -131,7 +140,6 @@ namespace FPSMulti
         //{
         //    weaponParent.localPosition = new Vector3((Mathf.Cos(z) * xintensity)/3+0.3f, (Mathf.Sin(z) * yintensity)/3+0.5f , weaponParentOriginal.z);
         //}
-        
         
         #endregion
 

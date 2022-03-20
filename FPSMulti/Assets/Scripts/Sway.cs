@@ -1,10 +1,11 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Photon.Pun;
 
 namespace FPSMulti
 {
-    public class Sway : MonoBehaviour
+    public class Sway : MonoBehaviourPunCallbacks
     {
         #region Variables
         public float intensity; //jak bardzo sie pochyla
@@ -24,6 +25,7 @@ namespace FPSMulti
         }
         private void Update()
         {
+          //  photonView.RPC("UpdateSway", RpcTarget.All);
             UpdateSway();
         }
         #endregion
@@ -31,6 +33,7 @@ namespace FPSMulti
 
 
         #region Private Methods
+   //     [PunRPC]
         private void UpdateSway()
         {
             //controls
