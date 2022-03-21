@@ -30,24 +30,28 @@ namespace FPSMulti
         // Update is called once per frame
         void Update()
         {
-            if (!photonView.IsMine) return;
-
-            if (Input.GetKeyDown(KeyCode.Alpha1))
+            if (photonView.IsMine)
             {
-                photonView.RPC("Equip", RpcTarget.All, 0); //nazwa funkcji z string, do kogo, argument funkcji
-            }
 
-            if (currentWeapon != null)
-            {
-                photonView.RPC("Aim", RpcTarget.All, (Input.GetKey(KeyCode.Z) || Input.GetMouseButton(1)));
-
-                if (Input.GetMouseButtonDown(0))//LPM
+                if (Input.GetKeyDown(KeyCode.Alpha1))
                 {
-                    photonView.RPC("Shoot", RpcTarget.All, Input.GetKey(KeyCode.Z));
+                    photonView.RPC("Equip", RpcTarget.All, 0); //nazwa funkcji z string, do kogo, argument funkcji
                 }
-                //weapon position elasticity
-                currentWeapon.transform.localPosition = Vector3.Lerp(currentWeapon.transform.localPosition, Vector3.zero, Time.deltaTime * 4f);
+
+                if (currentWeapon != null)
+                {
+                    photonView.RPC("Aim", RpcTarget.All, (Input.GetKey(KeyCode.Z) || Input.GetMouseButton(1)));
+
+                    if (Input.GetMouseButtonDown(0))//LPM
+                    {
+                        photonView.RPC("Shoot", RpcTarget.All, Input.GetKey(KeyCode.Z));
+                    }
+                    
+                    }
             }
+            //weapon position elasticity
+            currentWeapon.transform.localPosition = Vector3.Lerp(currentWeapon.transform.localPosition, Vector3.zero, Time.deltaTime * 4f);
+
         }
 
         #endregion
@@ -105,8 +109,6 @@ namespace FPSMulti
 
             bloom -= spawn.position;
             bloom.Normalize();
-
-
 
             //cooldown
             currentCooldown = loadout[currIndex].firerate;

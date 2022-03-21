@@ -25,7 +25,7 @@ namespace FPSMulti
         }
         private void Update()
         {
-          //  photonView.RPC("UpdateSway", RpcTarget.All);
+            photonView.RPC("UpdateSway", RpcTarget.All);
             UpdateSway();
         }
         #endregion
@@ -33,7 +33,7 @@ namespace FPSMulti
 
 
         #region Private Methods
-   //     [PunRPC]
+        [PunRPC]
         private void UpdateSway()
         {
             //controls
