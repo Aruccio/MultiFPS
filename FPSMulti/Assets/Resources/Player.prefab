@@ -413,6 +413,7 @@ MonoBehaviour:
     m_Bits: 64
   groundDetector: {fileID: 8572113033141292291}
   cameraParent: {fileID: 8572113032293314928}
+  maxHealth: 200
 --- !u!114 &8572113032494802089
 MonoBehaviour:
   m_ObjectHideFlags: 0

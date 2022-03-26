@@ -40,7 +40,8 @@ namespace FPSMulti
 
                 if (currentWeapon != null)
                 {
-                    photonView.RPC("Aim", RpcTarget.All, (Input.GetKey(KeyCode.Z) || Input.GetMouseButton(1)));
+
+                    Aim((Input.GetKey(KeyCode.Z) || Input.GetMouseButton(1)));
 
                     if (Input.GetMouseButtonDown(0))//LPM
                     {
@@ -50,7 +51,8 @@ namespace FPSMulti
                     }
             }
             //weapon position elasticity
-            currentWeapon.transform.localPosition = Vector3.Lerp(currentWeapon.transform.localPosition, Vector3.zero, Time.deltaTime * 4f);
+            if (currentWeapon != null)
+                currentWeapon.transform.localPosition = Vector3.Lerp(currentWeapon.transform.localPosition, Vector3.zero, Time.deltaTime * 4f);
 
         }
 
@@ -65,6 +67,7 @@ namespace FPSMulti
             GameObject newEquipment = Instantiate(loadout[pInd].prefab, weaponParent.position, weaponParent.rotation, weaponParent) as GameObject;
             newEquipment.transform.localPosition = Vector3.zero;
             newEquipment.transform.localEulerAngles = Vector3.zero;
+            newEquipment.GetComponent<Sway>().isMine = photonView.IsMine;
             currentWeapon = newEquipment;
             currIndex = pInd;
 
@@ -120,16 +123,25 @@ namespace FPSMulti
             {
                 GameObject newBulletHole = Instantiate(bulletholePrefab, hit.point + hit.normal * 0.001f, Quaternion.identity) as GameObject;
                 newBulletHole.transform.LookAt(hit.point + hit.normal);
-                Destroy(newBulletHole, 5f);
 
-                if (photonView.IsMine)
+              
+
+                //jesli trafiamy w gracza
+                if (hit.collider.gameObject.layer == 9)
                 {
-                    //jesli trafiamy w gracza
-                    if (hit.collider.gameObject.layer == 9)
+                    Destroy(newBulletHole, 1f);
+
+                    if (photonView.IsMine)
                     {
                         //RPC Call zadaj¹cy dmg graczowi
+                        hit.collider.gameObject.GetPhotonView().RPC("TakeDamage", RpcTarget.All, loadout[currIndex].damage);
                     }
                 }
+                else
+                {
+                    Destroy(newBulletHole, 5f);
+                }
+            
             }
 
 
@@ -138,7 +150,10 @@ namespace FPSMulti
             currentWeapon.transform.position -= currentWeapon.transform.forward * loadout[currIndex].kicback;
         }
 
-
+        private void TakeDamage(int dmg)
+        {
+            GetComponent<Motion>().TakeDamage(dmg);
+        }
         #endregion
     }
 }

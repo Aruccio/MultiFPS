@@ -5,7 +5,7 @@ using Photon.Pun;
 
 namespace FPSMulti
 {
-    public class Sway : MonoBehaviourPunCallbacks
+    public class Sway : MonoBehaviour
     {
         #region Variables
         public float intensity; //jak bardzo sie pochyla
@@ -13,6 +13,7 @@ namespace FPSMulti
 
         private Quaternion targetRotation;
         private Quaternion originRotation;
+        public bool isMine;
         #endregion
 
 
@@ -25,7 +26,6 @@ namespace FPSMulti
         }
         private void Update()
         {
-            photonView.RPC("UpdateSway", RpcTarget.All);
             UpdateSway();
         }
         #endregion
@@ -33,13 +33,17 @@ namespace FPSMulti
 
 
         #region Private Methods
-        [PunRPC]
         private void UpdateSway()
         {
             //controls
             float xmouse = Input.GetAxis("Mouse X");
             float ymouse = Input.GetAxis("Mouse Y");
 
+            if(!isMine)
+            {
+                xmouse = 0;
+                ymouse = 0;
+            }
             //calculate target rotation
             Quaternion xadj = Quaternion.AngleAxis(-intensity*xmouse, Vector3.up);
             Quaternion yadj = Quaternion.AngleAxis(intensity*ymouse, Vector3.right);

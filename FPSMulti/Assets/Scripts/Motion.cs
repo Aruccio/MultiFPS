@@ -15,7 +15,7 @@ namespace FPSMulti
         public LayerMask ground;
         public Transform groundDetector;
         public GameObject cameraParent;
-
+        public float maxHealth;
 
         private Rigidbody rig;
         private float baseFOV; //field of view
@@ -27,12 +27,14 @@ namespace FPSMulti
         private float movementCounter;
         private float idleCounter;
 
+        private float currentHealth;
+
         #endregion
 
         #region Monobehaviour Callbacks
         private void Start()
         {
-
+            currentHealth = maxHealth;
             cameraParent.SetActive(photonView.IsMine); //ustaw jedyna aktywn¹ kamerê obecnego gracza
 
             if(!photonView.IsMine) //jesli to nie jest gracz, zmien z "LocalPlayer" na "Player"
@@ -140,7 +142,25 @@ namespace FPSMulti
         //{
         //    weaponParent.localPosition = new Vector3((Mathf.Cos(z) * xintensity)/3+0.3f, (Mathf.Sin(z) * yintensity)/3+0.5f , weaponParentOriginal.z);
         //}
-        
+
+        #endregion
+
+        #region Public Methods
+        [PunRPC]
+        public void TakeDamage(int dmg)
+        {
+            if(photonView.IsMine)
+            {
+                currentHealth -= dmg;
+                Debug.Log(currentHealth);
+
+                if(currentHealth<=0)
+                {
+                    Debug.Log("===> You died!");
+                }
+            }
+        }
+
         #endregion
 
     }

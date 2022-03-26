@@ -13,6 +13,7 @@ MonoBehaviour:
   m_Name: Pistol
   m_EditorClassIdentifier: 
   name: Pistol
+  damage: 15
   firerate: 9000
   distance: 1000
   aimSpeed: 13

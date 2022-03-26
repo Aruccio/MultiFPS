@@ -6,6 +6,8 @@ using UnityEngine;
 public class Gun : ScriptableObject
 {
     public string name;
+    public int damage;
+    
     public float firerate;
     public float distance;
     public float aimSpeed;
@@ -13,5 +15,6 @@ public class Gun : ScriptableObject
     public float aimbloom;
     public float recoil;
     public float kicback;
+    
     public GameObject prefab;
 }
