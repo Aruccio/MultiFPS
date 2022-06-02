@@ -7,60 +7,67 @@ namespace FPSMulti
 {
     public class Weapon : MonoBehaviourPunCallbacks
     {
-
         #region Variables
+
         public Gun[] loadout;
         public Transform weaponParent;
         public GameObject bulletholePrefab;
         public LayerMask canBeShot;
 
         private GameObject currentWeapon;
-        private int currIndex;
+        private int currentIndex;
         private float bloomF;
         private float currentCooldown;
-        #endregion
+
+        #endregion Variables
 
         #region Monobehaviour Callbacks
-        // Start is called before the first frame update
-        void Start()
-        {
 
+        // Start is called before the first frame update
+        private void Start()
+        {
+            foreach (Gun g in loadout)
+            {
+                g.Initialize();
+            }
+            //    Equip(0);
         }
 
         // Update is called once per frame
-        void Update()
+        private void Update()
         {
-            if (photonView.IsMine)
+            if (photonView.IsMine && Input.GetKeyDown(KeyCode.Alpha1))
+                photonView.RPC("Equip", RpcTarget.All, 0); //nazwa funkcji z string, do kogo, argument funkcji
+
+            if (currentWeapon != null)
             {
-
-                if (Input.GetKeyDown(KeyCode.Alpha1))
+                if (photonView.IsMine)
                 {
-                    photonView.RPC("Equip", RpcTarget.All, 0); //nazwa funkcji z string, do kogo, argument funkcji
-                }
-
-                if (currentWeapon != null)
-                {
-
                     Aim((Input.GetKey(KeyCode.Z) || Input.GetMouseButton(1)));
-
                     if (Input.GetMouseButtonDown(0))//LPM
                     {
-                        photonView.RPC("Shoot", RpcTarget.All, Input.GetKey(KeyCode.Z));
+                        if (loadout[currentIndex].CanFire())
+                        {
+                            photonView.RPC("Shoot", RpcTarget.All, Input.GetKey(KeyCode.Z));
+                        }
+                        else loadout[currentIndex].Reload();
                     }
-                    
-                    }
-            }
-            //weapon position elasticity
-            if (currentWeapon != null)
-                currentWeapon.transform.localPosition = Vector3.Lerp(currentWeapon.transform.localPosition, Vector3.zero, Time.deltaTime * 4f);
 
+                    //                    if (currentCooldown > 0) currentCooldown = -Time.deltaTime;
+                }
+
+                //weapon position elasticity
+                if (currentWeapon != null)
+                    currentWeapon.transform.localPosition = Vector3.Lerp(currentWeapon.transform.localPosition, Vector3.zero, Time.deltaTime * 4f);
+            }
         }
 
-        #endregion
+        #endregion Monobehaviour Callbacks
 
         #region Private Methods
+
         [PunRPC]
-        void Equip(int pInd)
+        private void Equip(int pInd)
         {
             if (currentWeapon != null) Destroy(currentWeapon);
 
@@ -69,14 +76,12 @@ namespace FPSMulti
             newEquipment.transform.localEulerAngles = Vector3.zero;
             newEquipment.GetComponent<Sway>().isMine = photonView.IsMine;
             currentWeapon = newEquipment;
-            currIndex = pInd;
-
+            currentIndex = pInd;
         }
 
         [PunRPC]
         public void Aim(bool isAiming)
         {
-
             Transform anchor = currentWeapon.transform.Find("Anchor");
             Transform ads = currentWeapon.transform.Find("States/ADS");
             Transform hip = currentWeapon.transform.Find("States/Hip");
@@ -84,47 +89,45 @@ namespace FPSMulti
             if (isAiming)
             {
                 //aim
-                anchor.position = Vector3.Lerp(anchor.position, ads.position, Time.deltaTime * loadout[currIndex].aimSpeed);
+                anchor.position = Vector3.Lerp(anchor.position, ads.position, Time.deltaTime * loadout[currentIndex].aimSpeed);
             }
             else
             {
                 //hip
-                anchor.position = Vector3.Lerp(anchor.position, hip.position, Time.deltaTime * loadout[currIndex].aimSpeed);
-
+                anchor.position = Vector3.Lerp(anchor.position, hip.position, Time.deltaTime * loadout[currentIndex].aimSpeed);
             }
         }
+
         [PunRPC]
-        void Shoot(bool aiming)
+        private void Shoot(bool aiming)
         {
             Transform spawn = transform.Find("Cameras/PlayerCamera");
             //setup bloom
             Vector3 bloom = spawn.position + spawn.forward * 1000f;
             if (aiming)
             {
-                bloom += Random.Range(-loadout[currIndex].bloom, loadout[currIndex].bloom) * spawn.up;
-                bloom += Random.Range(-loadout[currIndex].bloom, loadout[currIndex].bloom) * spawn.right;
+                bloom += Random.Range(-loadout[currentIndex].bloom, loadout[currentIndex].bloom) * spawn.up;
+                bloom += Random.Range(-loadout[currentIndex].bloom, loadout[currentIndex].bloom) * spawn.right;
             }
             else
             {
-                bloom += Random.Range(-loadout[currIndex].aimbloom, loadout[currIndex].aimbloom) * spawn.up;
-                bloom += Random.Range(-loadout[currIndex].aimbloom, loadout[currIndex].aimbloom) * spawn.right;
+                bloom += Random.Range(-loadout[currentIndex].aimbloom, loadout[currentIndex].aimbloom) * spawn.up;
+                bloom += Random.Range(-loadout[currentIndex].aimbloom, loadout[currentIndex].aimbloom) * spawn.right;
             }
 
             bloom -= spawn.position;
             bloom.Normalize();
 
             //cooldown
-            currentCooldown = loadout[currIndex].firerate;
+            currentCooldown = loadout[currentIndex].firerate;
 
             //raycast
             RaycastHit hit = new RaycastHit();
 
-            if (Physics.Raycast(spawn.position, bloom, out hit, loadout[currIndex].distance, canBeShot))
+            if (Physics.Raycast(spawn.position, bloom, out hit, loadout[currentIndex].distance, canBeShot))
             {
                 GameObject newBulletHole = Instantiate(bulletholePrefab, hit.point + hit.normal * 0.001f, Quaternion.identity) as GameObject;
                 newBulletHole.transform.LookAt(hit.point + hit.normal);
-
-              
 
                 //jesli trafiamy w gracza
                 if (hit.collider.gameObject.layer == 9)
@@ -134,26 +137,26 @@ namespace FPSMulti
                     if (photonView.IsMine)
                     {
                         //RPC Call zadaj¹cy dmg graczowi
-                        hit.collider.gameObject.GetPhotonView().RPC("TakeDamage", RpcTarget.All, loadout[currIndex].damage);
+                        hit.collider.gameObject.GetPhotonView().RPC("TakeDamage", RpcTarget.All, loadout[currentIndex].damage);
                     }
                 }
                 else
                 {
                     Destroy(newBulletHole, 5f);
                 }
-            
             }
 
-
             //gun fx (recoil)
-            currentWeapon.transform.Rotate(-loadout[currIndex].recoil, 0, 0);
-            currentWeapon.transform.position -= currentWeapon.transform.forward * loadout[currIndex].kicback;
+            currentWeapon.transform.Rotate(-loadout[currentIndex].recoil, 0, 0);
+            currentWeapon.transform.position -= currentWeapon.transform.forward * loadout[currentIndex].kicback;
         }
 
+        [PunRPC]
         private void TakeDamage(int dmg)
         {
-            GetComponent<Motion>().TakeDamage(dmg);
+            GetComponent<Player>().TakeDamage(dmg);
         }
-        #endregion
+
+        #endregion Private Methods
     }
 }

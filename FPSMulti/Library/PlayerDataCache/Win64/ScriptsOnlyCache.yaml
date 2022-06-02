@@ -4,7 +4,7 @@ ScriptsOnlyBuild:
     - FPSMulti.Launcher
     - FPSMulti.Look
     - FPSMulti.Manager
-    - FPSMulti.Motion
+    - FPSMulti.Player
     - FPSMulti.Sway
     - FPSMulti.Weapon
     - Gun
@@ -31,6 +31,10 @@ ScriptsOnlyBuild:
     - UnityEditor.TestTools.TestRunner.TestListCacheData
     - UnityEditor.TestTools.TestRunner.TestRun.TestJobDataHolder
     UnityEngine.UI.dll:
+    - UnityEngine.EventSystems.EventSystem
+    - UnityEngine.EventSystems.StandaloneInputModule
+    - UnityEngine.UI.CanvasScaler
+    - UnityEngine.UI.GraphicRaycaster
     - UnityEngine.UI.Image
     - UnityEngine.UI.Shadow
     - UnityEngine.UI.Slider
@@ -66,12 +70,30 @@ ScriptsOnlyBuild:
     - Class: 108
       Script: {instanceID: 0}
     - Class: 114
+      Script: {instanceID: 1460}
+    - Class: 114
+      Script: {instanceID: 2450}
+    - Class: 114
+      Script: {instanceID: 2572}
+    - Class: 114
+      Script: {instanceID: 2752}
+    - Class: 114
+      Script: {instanceID: 2964}
+    - Class: 114
       Script: {instanceID: 4086}
     - Class: 115
+      Script: {instanceID: 0}
+    - Class: 136
       Script: {instanceID: 0}
     - Class: 157
       Script: {instanceID: 0}
     - Class: 196
+      Script: {instanceID: 0}
+    - Class: 222
+      Script: {instanceID: 0}
+    - Class: 223
+      Script: {instanceID: 0}
+    - Class: 224
       Script: {instanceID: 0}
     Assets/Scenes/MenuScene.unity:
     - Class: 1
@@ -938,7 +960,7 @@ ScriptsOnlyBuild:
       Hash: 53c79d3d5b28e6d89398b5dfbcd09a42
     assemblyName: Assembly-CSharp.dll
     namespaceName: FPSMulti
-    className: Motion
+    className: Player
   - hash:
       serializedVersion: 2
       Hash: cba6cca6bb3290c4c00d709cf63843db
@@ -1253,7 +1275,7 @@ ScriptsOnlyBuild:
     className: ScrollRect
   - hash:
       serializedVersion: 2
-      Hash: 69396409b7dfa74e2fa6049e245220ec
+      Hash: 674384d0eb913fc3ae3c8877dd79ed66
     assemblyName: Assembly-CSharp.dll
     namespaceName: FPSMulti
     className: Manager
