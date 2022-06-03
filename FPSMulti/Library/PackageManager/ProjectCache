@@ -5,16 +5,26 @@ m_ProjectFiles:
     m_ContentTrackingEnabled: 1
     m_ModificationDate:
       serializedVersion: 2
+<<<<<<< Updated upstream
       ticks: 637898374980423073
     m_Hash: 3529745186
+=======
+      ticks: 637897914351235948
+    m_Hash: 728776223
+>>>>>>> Stashed changes
   m_LockFileStatus:
     m_FilePath: D:/WLASNE/Unity/MultiFPS/FPSMulti/Packages/packages-lock.json
     m_PathExists: 1
     m_ContentTrackingEnabled: 1
     m_ModificationDate:
       serializedVersion: 2
+<<<<<<< Updated upstream
       ticks: 637898374980433065
     m_Hash: 173850735
+=======
+      ticks: 637897914375860894
+    m_Hash: 2249468046
+>>>>>>> Stashed changes
 m_EmbeddedPackageManifests:
   m_ManifestsStatus: {}
 m_PackageAssets:
